@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ividernvi/iviuser/internal/apiserver/cache"
+	"github.com/ividernvi/iviuser/internal/apiserver/objstore"
 	"github.com/ividernvi/iviuser/internal/apiserver/store"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
@@ -18,17 +19,21 @@ type UserService interface {
 	Verify(ctx context.Context, token string, opts *v1.VerifyOptions) (*v1.User, error)
 	Authorize(ctx context.Context, token, id string, opts *v1.VerifyOptions) error
 	Logout(ctx context.Context, token string, opts *v1.VerifyOptions) error
+	GetAvatar(ctx context.Context, userID string, opts *v1.GetOptions) ([]byte, error)
+	PutAvatar(ctx context.Context, userID string, data []byte, opts *v1.UpdateOptions) error
 }
 
 type userService struct {
 	store store.Store
 	cache cache.Cache
+	minio objstore.ObjStore
 }
 
 func newUserService(s *service) *userService {
 	return &userService{
 		store: s.store,
 		cache: s.cache,
+		minio: s.minio,
 	}
 }
 
@@ -79,4 +84,12 @@ func (s *userService) Logout(ctx context.Context, token string, opts *v1.VerifyO
 		return core.ErrNoAuthorization
 	}
 	return nil
+}
+
+func (s *userService) GetAvatar(ctx context.Context, userID string, opts *v1.GetOptions) ([]byte, error) {
+	return s.minio.Avators().Get(ctx, userID, opts)
+}
+
+func (s *userService) PutAvatar(ctx context.Context, userID string, data []byte, opts *v1.UpdateOptions) error {
+	return s.minio.Avators().Put(ctx, userID, data, opts)
 }

@@ -45,6 +45,10 @@ func RegisterRoutes(e *gin.Engine) {
 
 			// user like items
 			user.GET("/:id/:type/like", likeController.List)
+
+			// user avator
+			user.GET("/:id/avatar", userController.GetAvatar)
+			user.PUT("/:id/avatar", authorize, mustLogin, userController.PutAvatar)
 		}
 
 		post := v1.Group("/post")

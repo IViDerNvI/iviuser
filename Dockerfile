@@ -30,6 +30,7 @@ COPY --from=builder /app/conf/cert/key.crt ./conf/cert/key.crt
 RUN ls -l /root
 
 ENV IVIUSER_MYSQL_HOSTNAME="localhost"
+ENV IVIUSER_MINIO_ENDPOINT="localhost:9000"
 
 EXPOSE 8080
 EXPOSE 8443

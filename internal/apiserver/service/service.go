@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/ividernvi/iviuser/internal/apiserver/cache"
+	"github.com/ividernvi/iviuser/internal/apiserver/objstore"
 	"github.com/ividernvi/iviuser/internal/apiserver/store"
 )
 
@@ -19,12 +20,14 @@ type Service interface {
 type service struct {
 	store store.Store
 	cache cache.Cache
+	minio objstore.ObjStore
 }
 
 func NewService(store store.Store) Service {
 	return &service{
 		store: store,
 		cache: cache.CacheFactory(),
+		minio: *objstore.GetObjStore(),
 	}
 }
 

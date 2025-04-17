@@ -20,6 +20,14 @@ var (
 	IVIUSER_MYSQL_DATABASE = os.Getenv("IVIUSER_MYSQL_DATABASE")
 )
 
+var (
+	IVIUSER_MINIO_ENDPOINT          = os.Getenv("IVIUSER_MINIO_ENDPOINT")
+	IVIUSER_MINIO_ACCESS_KEY_ID     = os.Getenv("IVIUSER_MINIO_ACCESS_KEY_ID")
+	IVIUSER_MINIO_SECRET_ACCESS_KEY = os.Getenv("IVIUSER_MINIO_SECRET_ACCESS_KEY")
+	IVIUSER_MINIO_USE_SSL           = os.Getenv("IVIUSER_MINIO_USE_SSL")
+	IVIUSER_MINIO_BUCKET_NAME       = os.Getenv("IVIUSER_MINIO_BUCKET_NAME")
+)
+
 func newConfig() *Config {
 	return &Config{
 		Options: options.NewOptions(),
@@ -37,6 +45,7 @@ func getDefault() {
 	checkDefaultEnv()
 	defaultConfig = newConfig()
 	defaultConfig.Options.MySQLOpts.HostName = IVIUSER_MYSQL_HOSTNAME
+	defaultConfig.Options.MinioOpts.Endpoint = IVIUSER_MINIO_ENDPOINT
 }
 
 func checkDefaultEnv() {

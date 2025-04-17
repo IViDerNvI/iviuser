@@ -423,6 +423,73 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /user/{username}/avatar:
+    put:
+      tags:
+        - user
+      summary: Update user avatar resource.
+      description: This can only be done by the logged in user.
+      operationId: updateUserAvatar
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update user avatar
+        content:
+          image/png:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      tags:
+        - user
+      summary: Get user avatar resource.
+      description: This can only be done by the logged in user.
+      operationId: getUserAvatar
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            image/png:
+              schema:
+                type: object
+                properties:
+                  file:
+                    type: string
+                    format: binary
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /post:
     post:
       tags:

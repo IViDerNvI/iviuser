@@ -7,6 +7,8 @@ import (
 	"github.com/ividernvi/iviuser/internal/apiserver/cache"
 	"github.com/ividernvi/iviuser/internal/apiserver/cache/ristretto"
 	"github.com/ividernvi/iviuser/internal/apiserver/config"
+	"github.com/ividernvi/iviuser/internal/apiserver/objstore"
+	"github.com/ividernvi/iviuser/internal/apiserver/objstore/minio"
 	"github.com/ividernvi/iviuser/internal/apiserver/store"
 	"github.com/ividernvi/iviuser/internal/apiserver/store/mysql"
 	"github.com/spf13/cobra"
@@ -35,6 +37,12 @@ var apiserverCmd = &cobra.Command{
 
 		CacheIns := ristretto.GetCacheInstance()
 		cache.SetCacheFactory(CacheIns)
+
+		MinioIns, err := minio.GetMinioInstance(cfg.Options.MinioOpts)
+		if err != nil {
+			panic(err)
+		}
+		objstore.SetObjStore(minio.NewObjStore(MinioIns))
 
 		go RunGRPCServer(cfg)
 
