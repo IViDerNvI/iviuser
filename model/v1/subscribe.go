@@ -1,0 +1,17 @@
+package model
+
+type Subscribe struct {
+	ObjMeta   `json:",inline"`
+	UserNames string `json:"username" gorm:"column:username" validate:"required"`
+	ItemType  string `json:"item_type" gorm:"column:item_type" validate:"required"`
+	ItemID    string `json:"item_id" gorm:"column:item_id" validate:"required"`
+}
+
+type SubscribeList struct {
+	ListMeta `json:",inline"`
+	Items    []Subscribe `json:"items"`
+}
+
+func (s *Subscribe) TableName() string {
+	return "subscribes"
+}

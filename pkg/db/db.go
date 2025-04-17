@@ -42,7 +42,9 @@ func New(opts DBOptions) (*gorm.DB, error) {
 		if i > 0 {
 			logrus.Warnf("retrying to connect to database, attempt: %d", i)
 		}
-		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: &MyDatabaseLog{},
+		})
 		if err == nil {
 			break
 		}

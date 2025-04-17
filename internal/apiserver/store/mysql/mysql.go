@@ -41,6 +41,34 @@ func (d *datastore) Users() store.UserStore {
 	return newUserStore(d.db)
 }
 
+func (d *datastore) Posts() store.PostStore {
+	return newPostStore(d.db)
+}
+
+func (d *datastore) Comments() store.CommentStore {
+	return newCommentStore(d.db)
+}
+
+func (d *datastore) Likes() store.LikeStore {
+	return newLikeStore(d.db)
+}
+
+func (d *datastore) Submits() store.SubmitStore {
+	return newSubmitStore(d.db)
+}
+
+func (d *datastore) Problems() store.ProblemStore {
+	return newProblemStore(d.db)
+}
+
+func (d *datastore) Subscribes() store.SubscribeStore {
+	return newSubscribeStore(d.db)
+}
+
+func (d *datastore) Solutions() store.SolutionStore {
+	return newSolutionStore(d.db)
+}
+
 func (d *datastore) Close() {
 	sqlDB, err := d.db.DB()
 	if err != nil {
@@ -54,10 +82,40 @@ func AutoMigrate(db *gorm.DB) {
 	if err != nil {
 		panic(err)
 	}
+
+	err = db.AutoMigrate(&v1.Post{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.AutoMigrate(&v1.Comment{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.AutoMigrate(&v1.Like{})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func AutoDrop(db *gorm.DB) {
 	err := db.Migrator().DropTable(&v1.User{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Post{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Comment{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Like{})
 	if err != nil {
 		panic(err)
 	}

@@ -6,7 +6,14 @@ import (
 )
 
 type Service interface {
-	Users() UserSrv
+	Users() UserService
+	Posts() PostService
+	Problems() ProblemService
+	Comments() CommentService
+	Submits() SubmitService
+	Subscribes() SubscribeService
+	Likes() LikeService
+	Solutions() SolutionService
 }
 
 type service struct {
@@ -21,6 +28,34 @@ func NewService(store store.Store) Service {
 	}
 }
 
-func (s *service) Users() UserSrv {
-	return newUserSrv(s)
+func (s *service) Users() UserService {
+	return newUserService(s)
+}
+
+func (s *service) Posts() PostService {
+	return newPostService(s)
+}
+
+func (s *service) Problems() ProblemService {
+	return newProblemService(s)
+}
+
+func (s *service) Submits() SubmitService {
+	return newSubmitService(s)
+}
+
+func (s *service) Subscribes() SubscribeService {
+	return newSubscribeService(s)
+}
+
+func (s *service) Likes() LikeService {
+	return newLikeService(s)
+}
+
+func (s *service) Comments() CommentService {
+	return newCommentService(s)
+}
+
+func (s *service) Solutions() SolutionService {
+	return newSolutionService(s)
 }

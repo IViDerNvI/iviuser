@@ -31,8 +31,8 @@ func GetCacheInstance() cache.Cache {
 	return CacheIns
 }
 
-func (d *datacache) Users() cache.UserCache {
-	return newUserCache(d)
+func (d *datacache) Tokens() cache.TokenCache {
+	return newTokenCache(d)
 }
 
 func (d *datacache) Close() {

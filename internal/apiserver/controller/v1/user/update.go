@@ -1,22 +1,37 @@
 package user
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
 )
 
-func (c *UserController) Update(gin *gin.Context) {
+func (c *UserController) Update(ctx *gin.Context) {
+	username := ctx.Param("id")
+	old, err := c.Srv.Users().Get(ctx, username, nil)
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
 	var user v1.User
-	if err := gin.ShouldBindJSON(&user); err != nil {
-		core.WriteResponse(gin, err, nil)
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		core.WriteResponse(ctx, core.ErrJSONFormation, nil)
 		return
 	}
-	if err := c.Srv.Users().Update(gin, &user, nil); err != nil {
-		core.WriteResponse(gin, err, nil)
+
+	opUserName := ctx.MustGet("X-Operation-User-Name").(string)
+	opUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
+
+	if opUserStatus != "admin" && opUserName != user.UserName {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
 		return
 	}
-	gin.JSON(http.StatusOK, user)
+
+	old.Override(&user)
+	if err := c.Srv.Users().Update(ctx, &user, nil); err != nil {
+		core.WriteResponse(ctx, core.ErrDatabaseUpdate, nil)
+		return
+	}
+	core.WriteResponse(ctx, nil, nil)
 }

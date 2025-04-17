@@ -1,7 +1,6 @@
 package options
 
 import (
-	"os"
 	"strconv"
 	"time"
 )
@@ -51,7 +50,7 @@ func (o *MySQLOptions) MaxLifetime() time.Duration {
 
 func NewMySQLOptions() *MySQLOptions {
 	return &MySQLOptions{
-		HostName:              os.Getenv("IVIUSER_MYSQL_HOSTNAME"),
+		HostName:              "127.0.0.1",
 		BindPort:              3306,
 		User:                  "root",
 		Passwd:                "root",

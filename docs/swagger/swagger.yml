@@ -1,46 +1,1328 @@
-openapi: 3.0.0
+openapi: 3.0.4
 info:
-  title: Sample API
-  description: API description in Markdown.
-  version: 1.0.0
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |-
+    This is a sample server.
+  termsOfService: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/README.md
+  contact:
+    email: ividernvi@outlook.com
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  version: 1.0.12
+externalDocs:
+  description: Find out more about Swagger
+  url: https://github.com/ividernvi/iviuser
 servers:
-  - url: http://api.example.com/v1
+  - url: https://localhost:8443/v1
+tags:
+  - name: authorization
+    description: Operations about authorization
+  - name: user
+    description: Operations about user
+    externalDocs:
+      description: Find out more
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/user/user.md
+  - name: post
+    description: Operations about post
+    externalDocs:
+      description: Find out more about post
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/post/post.md
+  - name: comment
+    description: Operations about comment
+    externalDocs:
+      description: Find out more about comment
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/comment/comment.md
+  - name: like
+    description: Operations about like
+    externalDocs:
+      description: Find out more about like
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/like/like.md
 paths:
-  /users:
-    get:
-      summary: List all users
-      operationId: listUsers
+  /login:
+    post:
+      tags:
+        - authorization
+      summary: Logs user into the system
+      description: |-
+        Login API requires the `Authorization` header with the value `Basic <base64-encoded-credentials>`.
+
+        for example: 
+        ```
+        Authorzation: Basic dXNlcmFjY291bnQ6dmFsaWRwYXNzd2Q=
+        ```
+      operationId: login
+      security:
+        - api_key: []
       responses:
-        '200':
-          description: A JSON array of user names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-  /users/{userId}:
-    get:
-      summary: Get a user by ID
-      operationId: getUserById
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: The ID of the user to retrieve
-          schema:
-            type: string
-      responses:
-        '200':
-          description: A user object
+        "200":
+          description: successful operation
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
                     type: string
-                  name:
+                    example: "login success"
+                  data:
                     type: string
-        '404':
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDQ4NzQyMTYsInJlYWxtIjoiIiwidXNlcl9pbnN0YW5jZSI6MTkxMjczNjk4OTYwMjM4NTkyMCwidXNlcl9zdGF0dXMiOiJ1c2VyIiwidXNlcm5hbWUiOiJ1c2VyYWNjb3VudCJ9.3s5inJM1oKqgPq3czyBo_rxxQpmOHZ7Tibj61xIepKc"
+                  status:
+                    type: string
+                    example: "success"
+        "400":
+          description: Invalid username/password supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /logout:
+    post:
+      tags:
+        - authorization
+      summary: Logout API expires the token mannually.
+      description: |-
+        Logout API requires the `Authorization` header with the value `Bearer <token>`.
+
+        for example: 
+        ```
+        Authorzation: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDQ4NzQyMTYsInJlYWxtIjoiIiwidXNlcl9pbnN0YW5jZSI6MTkxMjczNjk4OTYwMjM4NTkyMCwidXNlcl9zdGF0dXMiOiJ1c2VyIiwidXNlcm5hbWUiOiJ1c2VyYWNjb3VudCJ9.3s5inJM1oKqgPq3czyBo_rxxQpmOHZ7Tibj61xIepKc"
+        ```
+      operationId: logout
+      security:
+        - api_key: []
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "logout success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    type: object
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /refresh:
+    post:
+      tags:
+        - authorization
+      summary: Refresh token
+      description: |-
+        Refresh API requires the `Authorization` header with the value `Bearer <token>`.
+
+        for example: 
+        ```
+        Authorzation: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDQ4NzQyMTYsInJlYWxtIjoiIiwidXNlcl9pbnN0YW5jZSI6MTkxMjczNjk4OTYwMjM4NTkyMCwidXNlcl9zdGF0dXMiOiJ1c2VyIiwidXNlcm5hbWUiOiJ1c2VyYWNjb3VudCJ9.3s5inJM1oKqgPq3czyBo_rxxQpmOHZ7Tibj61xIepKc"
+        ```
+      operationId: refresh
+      security:
+        - api_key: []
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "refresh success"
+                  data:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDQ4NzQyMTYsInJlYWxtIjoiIiwidXNlcl9pbnN0YW5jZSI6MTkxMjczNjk4OTYwMjM4NTkyMCwidXNlcl9zdGF0dXMiOiJ1c2VyIiwidXNlcm5hbWUiOiJ1c2VyYWNjb3VudCJ9.3s5inJM1oKqgPq3czyBo_rxxQpmOHZ7Tibj61xIepKc"
+                  status:
+                    type: string
+                    example: "success"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user.
+      description: This can be done by the none-logged in user, but admin creation can only be done by the logged in admin user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "user created"
+                  data:
+                    $ref: "#/components/schemas/User"
+                  status:
+                    type: string
+                    example: "success"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      tags:
+        - user
+      summary: query users.
+      description: |-
+        This can only be done by the logged in user.
+      operationId: getAllUsers
+      parameters:
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        - name: username
+          in: query
+          description: The name of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "useraccount"
+        - name: status
+          in: query
+          description: The status of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "user"
+        - name: email
+          in: query
+          description: The email of the user to search for
+          required: false
+          schema:
+            type: string
+            format: email
+        - name: nickname
+          in: query
+          description: The nickname of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "user_nickname"
+        - name: phone
+          in: query
+          description: The phone of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "xxxxxxxxxxx"
+        - name: company
+          in: query
+          description: The company of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "company"
+        - name: location
+          in: query
+          description: The location of the user to search for
+          required: false
+          schema:
+            type: string
+            example: "xxx,xxx,xxx"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/UserList"
+                  status:
+                    type: string
+                    example: "success"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get user by username.
+      description: Get user detail based on username.
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be fetched. Use user1 for testing
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - user
+      summary: Update user resource.
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: user not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - user
+      summary: Delete user resource.
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Invalid username supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /post:
+    post:
+      tags:
+        - post
+      summary: Create post.
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "user created"
+                  data:
+                    $ref: "#/components/schemas/Post"
+                  status:
+                    type: string
+                    example: "success"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Post"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+    get:
+      tags:
+        - post
+      summary: query posts.
+      description: |-
+        This can only be done by the logged in user.
+      operationId: getAllPosts
+      parameters:
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        - name: title
+          in: query
+          description: The title of the post to search for
+          required: false
+          schema:
+            type: string
+            example: "post title"
+        - name: content
+          in: query
+          description: The content of the post to search for
+          required: false
+          schema:
+            type: string
+            example: "post content"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/PostList"
+                  status:
+                    type: string
+                    example: "success"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /post/{id}:
+    get:
+      tags:
+        - post
+      summary: Get post by id.
+      description: Get post detail based on id.
+      operationId: getPostById
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be fetched. Use user1 for testing
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - post
+      summary: Update post resource.
+      description: This can only be done by the logged in user.
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          description: id that need to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent post in the store
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - post
+      summary: Delete post resource.
+      description: This can only be done by the logged in user.
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Post deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Invalid id supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /comment:
+    post:
+      tags:
+        - comment
+      summary: Create comment.
+      description: This can only be done by the logged in user.
+      operationId: createComment
+      requestBody:
+        description: Created comment object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "comment created"
+                  data:
+                    $ref: "#/components/schemas/Comment"
+                  status:
+                    type: string
+                    example: "success"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      tags:
+        - comment
+      summary: query comments.
+      description: |-
+        This can only be done by the logged in user.
+      operationId: getAllComments
+      parameters:
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        - name: refer_id
+          in: query
+          description: The refer id of the comment to search for
+          required: false
+          schema:
+            type: string
+            example: "1912760398554075136"
+        - name: refer_type
+          in: query
+          description: The refer type of the comment to search for, such as post or comment.
+          required: false
+          schema:
+            type: string
+            example: "post"
+        - name: source_id
+          in: query
+          description: The source id of the comment to search for, such as post or comment.
+          required: false
+          schema:
+            type: string
+            example: "1912760398554075136"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/CommentList"
+                  status:
+                    type: string
+                    example: "success"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /comment/{id}:
+    get:
+      tags:
+        - comment
+      summary: Get comment by id.
+      description: Get comment detail based on id.
+      operationId: getCommentById
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be fetched. Use user1 for testing
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - comment
+      summary: Update comment resource.
+      description: This can only be done by the logged in user.
+      operationId: updateComment
+      parameters:
+        - name: id
+          in: path
+          description: id that need to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Update an existent comment in the store
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comment"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - comment
+      summary: Delete comment resource.
+      description: This can only be done by the logged in user.
+      operationId: deleteComment
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Comment deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Invalid id supplied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Comment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /like/{resource_id}/{resource_type}:
+    post:
+      tags:
+        - like
+      summary: Like a resource.
+      description: This can only be done by the logged in user.
+      operationId: likeResource
+      parameters:
+        - name: resource_id
+          in: path
+          description: The id of the resource to like
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: resource_type
+          in: path
+          description: The type of the resource to like, such as post or comment.
+          required: true
+          schema:
+            type: string
+            example: "post"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "like success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/Like"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - like
+      summary: Unlike a resource.
+      description: This can only be done by the logged in user.
+      operationId: unlikeResource
+      parameters:
+        - name: resource_id
+          in: path
+          description: The id of the resource to unlike
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: resource_type
+          in: path
+          description: The type of the resource to unlike, such as post or comment.
+          required: true
+          schema:
+            type: string
+            example: "post"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "unlike success"
+                  status:
+                    type: string
+                    example: "success"
+                  type:
+                    nullable: true
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      tags:
+        - like
+      summary: Get likes count of a resource.
+      description: This can only be done by the logged in user.
+      operationId: getLikes
+      parameters:
+        - name: resource_id
+          in: path
+          description: The id of the resource to get likes for
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: resource_type
+          in: path
+          description: The type of the resource to get likes for, such as post or comment.
+          required: true
+          schema:
+            type: string
+            example: "post"
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "get likes success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/LikeList"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{username}/like:
+    get:
+      tags:
+        - like
+      summary: Get user likes.
+      description: This can only be done by the logged in user.
+      operationId: getUserLikes
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user to get likes for
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "get user likes success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/PostList"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    LikeList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          format: int32
+          example: 100
+        Items:
+          nullable: true
+    Like:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: int64
+          example: 1
+        instanceID:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        item_id:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        item_type:
+          type: string
+          example: "post"
+    CommentList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          format: int32
+          example: 100
+        Items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+    Comment:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: int64
+          example: 1
+        instanceID:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        content:
+          type: string
+          example: "comment content"
+        author:
+          type: string
+          example: "useraccount"
+        refer_id:
+          type: string
+          example: "1912760398554075136"
+        refer_type:
+          type: string
+          example: "comment"
+        source_id:
+          type: string
+          example: "1912760398554075136"
+        source_type:
+          type: string
+          example: "post"
+    PostList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          format: int32
+          example: 100
+        Items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+    Post:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: int64
+          example: 1
+        instanceID:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        title:
+          type: string
+          example: "post title"
+        content:
+          type: string
+          example: "post content"
+        author:
+          type: string
+          example: "useraccount"
+    UserList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          format: int32
+          example: 100
+        Items:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+    User:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: int64
+          example: 1
+        instanceID:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        username:
+          type: string
+          example: "useraccount"
+        password:
+          type: string
+          example: "$2a$10$CXKD87tFfImmpJ.07Kjq9OnLEQ8ei..95OFDRIoRUFje4YGNyd8au"
+        status:
+          type: string
+          example: "user"
+        nickname:
+          type: string
+          example: "user_nickname"
+        email:
+          type: string
+          format: email
+          example: "xxx@xxx.com"
+        phone:
+          type: string
+          example: "xxxxxxxxxxx"
+        avatar:
+          type: string
+          example: "http://xxx.cdn.com"
+        bio:
+          type: string
+          example: "a long bio"
+        company:
+          type: string
+          example: "company"
+        location:
+          type: string
+          example: "xxx,xxx,xxx"
+        profile_url:
+          type: string
+          format: uri
+          example: "https://external_url.com"
+      required:
+        - username
+        - password
+        - email
+        - status
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 999999
+        message:
+          type: string
+          example: "unknown"
+        status:
+          type: string
+          example: "error"
+        data:
+          type: object
+      required:
+        - code
+        - message
+        - status
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            "write:pets": modify pets in your account
+            "read:pets": read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header

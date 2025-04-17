@@ -1,7 +1,7 @@
 package cache
 
 type Cache interface {
-	Users() UserCache
+	Tokens() TokenCache
 	Close()
 }
 
