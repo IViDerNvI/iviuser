@@ -26,4 +26,6 @@ var (
 	ErrTokenCreateFailed = NewErrCode(500, 3006, "Token create failed")
 
 	ErrTokenUnsported = NewErrCode(500, 3007, "Token unsupported")
+
+	ErrUnknownOperator = NewErrCode(500, 3008, "Unknown operator")
 )

@@ -7,8 +7,8 @@ import (
 )
 
 func (c *UserController) Update(ctx *gin.Context) {
-	username := ctx.Param("id")
-	old, err := c.Srv.Users().Get(ctx, username, nil)
+	requestUsername := ctx.Param("id")
+	old, err := c.Srv.Users().Get(ctx, requestUsername, nil)
 	if err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
@@ -19,19 +19,21 @@ func (c *UserController) Update(ctx *gin.Context) {
 		core.WriteResponse(ctx, core.ErrJSONFormation, nil)
 		return
 	}
+
 	opUserName, ok := ctx.Get("X-Operation-User-Name")
 	if !ok || opUserName == nil {
-		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		core.WriteResponse(ctx, core.ErrUnknownError, nil)
 		return
 	}
 
 	opUserStatus, ok := ctx.Get("X-Operation-User-Status")
 	if !ok || opUserStatus == nil {
-		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		core.WriteResponse(ctx, core.ErrUnknownError, nil)
 		return
 	}
-	if opUserStatus != "admin" && opUserName != user.UserName {
-		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+
+	if opUserName != requestUsername && opUserStatus != "admin" {
+		core.WriteResponse(ctx, core.ErrUnknownOperator, nil)
 		return
 	}
 
