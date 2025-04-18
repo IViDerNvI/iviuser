@@ -14,8 +14,17 @@ func (c *CommentController) Create(ctx *gin.Context) {
 		return
 	}
 
-	opUserName := ctx.MustGet("X-Operation-User-Name").(string)
-	opUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
+	opUserName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	opUserStatus, ok := ctx.Get("X-Operation-User-Status")
+	if !ok || opUserStatus == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 
 	if opUserStatus != "admin" && opUserName != comment.Auhtor {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)

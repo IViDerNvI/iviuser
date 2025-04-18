@@ -9,8 +9,17 @@ import (
 )
 
 func (c *LikeController) List(ctx *gin.Context) {
-	offset, _ := strconv.Atoi(ctx.Query("offset"))
-	limit, _ := strconv.Atoi(ctx.Query("limit"))
+	offset, err := strconv.Atoi(ctx.Query("offset"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
+
+	limit, err := strconv.Atoi(ctx.Query("limit"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 
 	mapper := map[string]string{
 		"item_type": ctx.Param("type"),

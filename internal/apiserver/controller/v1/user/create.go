@@ -14,7 +14,11 @@ func (c *UserController) Create(ctx *gin.Context) {
 	}
 
 	if user.IsAdmin() {
-		operatorStatus := ctx.MustGet("X-Operation-User-Status").(string)
+		operatorStatus, ok := ctx.Get("X-Operation-User-Status")
+		if !ok {
+			core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+			return
+		}
 		if operatorStatus != "admin" {
 			core.WriteResponse(ctx, core.ErrAdminNeed, nil)
 			return

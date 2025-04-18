@@ -18,11 +18,18 @@ func (c *CommentController) Update(ctx *gin.Context) {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
+	opUserName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 
-	operatorUserName := ctx.MustGet("X-Operation-User-Name").(string)
-	operatorUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
-
-	if operatorUserStatus != "admin" && operatorUserName != com.Auhtor {
+	opUserStatus, ok := ctx.Get("X-Operation-User-Status")
+	if !ok || opUserStatus == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+	if opUserStatus != "admin" && opUserName != com.Auhtor {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
 		return
 	}

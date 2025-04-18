@@ -1,6 +1,10 @@
 package core
 
-import "github.com/gin-gonic/gin"
+import (
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
 
 func WriteResponse(ctx *gin.Context, err error, data interface{}) {
 	if err != nil {
@@ -52,9 +56,11 @@ func WriteResponseWithFile(ctx *gin.Context, err error, file []byte) {
 		return
 	}
 
+	len := strconv.Itoa(len(file))
+
 	ctx.Header("Content-Disposition", "inline; filename=avatar.png")
 	ctx.Header("Content-Type", "image/png")
-	ctx.Header("Content-Length", string(len(file)))
+	ctx.Header("Content-Length", len)
 	ctx.Header("Accept-Ranges", "bytes")
 	ctx.Header("Cache-Control", "public, max-age=31536000")
 	ctx.Data(200, "image/png", file)

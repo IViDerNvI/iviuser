@@ -92,3 +92,18 @@ func Selector(searchkey map[string]string) string {
 	}
 	return selector[:len(selector)-1]
 }
+
+func (opts *ListOptions) Complete() {
+	if opts.Limit == 0 {
+		opts.Limit = 10
+	}
+	if opts.Offset == 0 {
+		opts.Offset = 0
+	}
+	if opts.TimeoutSeconds == 0 {
+		opts.TimeoutSeconds = 30
+	}
+	if opts.ResourceVersion == "" {
+		opts.ResourceVersion = "v1"
+	}
+}

@@ -7,18 +7,35 @@ import (
 )
 
 func (c *SubscribeController) Create(ctx *gin.Context) {
-	var subscribe v1.Subscribe
+	rsrcId := ctx.Param("resourceid")
+	rsrcType := ctx.Param("type")
 
-	if err := ctx.ShouldBindJSON(&subscribe); err != nil {
+	opUserNameRaw, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserNameRaw == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+	opUserName, ok := opUserNameRaw.(string)
+	if !ok {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	sub := v1.Subscribe{
+		ItemType: rsrcType,
+		ItemID:   rsrcId,
+		UserName: opUserName,
+	}
+
+	if err := sub.Validate(); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
 
-	err := c.Service.Subscribes().Create(ctx, &subscribe, nil)
-	if err != nil {
+	if err := c.Service.Subscribes().Create(ctx, &sub, nil); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
 
-	core.WriteResponse(ctx, nil, subscribe)
+	core.WriteResponse(ctx, nil, sub)
 }

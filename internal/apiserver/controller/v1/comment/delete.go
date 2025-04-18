@@ -20,10 +20,19 @@ func (c *CommentController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	opUserName := ctx.MustGet("X-Operation-User-Name").(string)
-	opUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
+	operatorName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || operatorName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 
-	if opUserStatus != "admin" && opUserName != comment.Auhtor {
+	operatorStatus, ok := ctx.Get("X-Operation-User-Status")
+	if !ok || operatorStatus == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	if operatorStatus != "admin" && operatorName != comment.Auhtor {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
 		return
 	}

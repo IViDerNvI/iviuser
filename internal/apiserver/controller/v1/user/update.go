@@ -19,10 +19,17 @@ func (c *UserController) Update(ctx *gin.Context) {
 		core.WriteResponse(ctx, core.ErrJSONFormation, nil)
 		return
 	}
+	opUserName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 
-	opUserName := ctx.MustGet("X-Operation-User-Name").(string)
-	opUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
-
+	opUserStatus, ok := ctx.Get("X-Operation-User-Status")
+	if !ok || opUserStatus == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 	if opUserStatus != "admin" && opUserName != user.UserName {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
 		return

@@ -2,14 +2,32 @@ package subscribe
 
 import (
 	"github.com/gin-gonic/gin"
+	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
 )
 
 func (c *SubscribeController) Delete(ctx *gin.Context) {
-	id := ctx.Param("id")
+	rsrcType := ctx.Param("type")
+	rsrcId := ctx.Param("resourceid")
 
-	err := c.Service.Subscribes().Delete(ctx, id, nil)
-	if err != nil {
+	opUserNameRaw, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserNameRaw == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+	opUserName, ok := opUserNameRaw.(string)
+	if !ok {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	sub := &v1.Subscribe{
+		ItemType: rsrcType,
+		ItemID:   rsrcId,
+		UserName: opUserName,
+	}
+
+	if err := c.Service.Subscribes().Delete(ctx, sub, nil); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}

@@ -11,17 +11,20 @@ info:
     url: https://opensource.org/license/mit
   version: 1.0.12
 externalDocs:
-  description: Find out more about Swagger
-  url: https://github.com/ividernvi/iviuser
+  description: Find out more about iviuser
+  url: https://github.com/ividernvi/iviuser/blob/main/README.md
 servers:
   - url: https://localhost:8443/v1
 tags:
   - name: authorization
     description: Operations about authorization
+    externalDocs:
+      description: Find out more about authorization
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/auth/auth.md
   - name: user
     description: Operations about user
     externalDocs:
-      description: Find out more
+      description: Find out more about user
       url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/user/user.md
   - name: post
     description: Operations about post
@@ -38,6 +41,11 @@ tags:
     externalDocs:
       description: Find out more about like
       url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/like/like.md
+  - name: subscribe
+    description: Operations about subscribe
+    externalDocs:
+      description: Find out more about subscribe
+      url: https://github.com/IViDerNvI/iviuser/blob/main/docs/api/subscribe/subscribe.md
 paths:
   /login:
     post:
@@ -828,7 +836,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /comment/{id}:
+  /comment/{comment_instance_id}:
     get:
       tags:
         - comment
@@ -836,7 +844,7 @@ paths:
       description: Get comment detail based on id.
       operationId: getCommentById
       parameters:
-        - name: id
+        - name: comment_instance_id
           in: path
           description: The id that needs to be fetched. Use user1 for testing
           required: true
@@ -872,7 +880,7 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updateComment
       parameters:
-        - name: id
+        - name: comment_instance_id
           in: path
           description: id that need to be updated
           required: true
@@ -917,7 +925,7 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteComment
       parameters:
-        - name: id
+        - name: comment_instance_id
           in: path
           description: The id that needs to be deleted
           required: true
@@ -954,7 +962,10 @@ paths:
       tags:
         - like
       summary: Like a resource.
-      description: This can only be done by the logged in user.
+      description: |-
+        This can only be done by the logged in user.
+
+        Header `Authorzation` is required. 
       operationId: likeResource
       parameters:
         - name: resource_id
@@ -1001,7 +1012,10 @@ paths:
       tags:
         - like
       summary: Unlike a resource.
-      description: This can only be done by the logged in user.
+      description: |-
+        This can only be done by the logged in user.
+
+        Header `Authorzation` is required.
       operationId: unlikeResource
       parameters:
         - name: resource_id
@@ -1048,7 +1062,6 @@ paths:
       tags:
         - like
       summary: Get likes count of a resource.
-      description: This can only be done by the logged in user.
       operationId: getLikes
       parameters:
         - name: resource_id
@@ -1096,7 +1109,6 @@ paths:
       tags:
         - like
       summary: Get user likes.
-      description: This can only be done by the logged in user.
       operationId: getUserLikes
       parameters:
         - name: username
@@ -1147,9 +1159,268 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /subscribe/{resource_type}/{resource_instance_id}:
+    post:
+      tags:
+        - subscribe
+      summary: Subscribe to a user.
+      description: |- 
+        This can only be done by the logged in user.
 
+        Header `Authorzation` is required. 
+      operationId: subscribeUser
+      parameters:
+        - name: resource_type
+          in: path
+          description: The type of the resource to subscribe to, such as user.
+          required: true
+          schema:
+            type: string
+            example: "user"
+        - name: resource_instance_id
+          in: path
+          description: The instance id of the resource to subscribe to
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "subscribe success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/Subscribe"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - subscribe
+      summary: Unsubscribe from a user.
+      description: |-
+        This can only be done by the logged in user.
+
+        Header `Authorzation` is required.
+      operationId: unsubscribeUser
+      parameters:
+        - name: resource_type
+          in: path
+          description: The type of the resource to unsubscribe from, such as user.
+          required: true
+          schema:
+            type: string
+            example: "user"
+        - name: resource_instance_id
+          in: path
+          description: The instance id of the resource to unsubscribe from
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "unsubscribe success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    nullable: true
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      tags:
+        - subscribe
+      summary: Get subscriptions of a user.
+      operationId: getUserSubscriptions
+      parameters:
+        - name: resource_type
+          in: path
+          description: The type of the resource to get subscriptions for, such as user.
+          required: true
+          schema:
+            type: string
+            example: "user"
+        - name: resource_instance_id
+          in: path
+          description: The instance id of the resource to get subscriptions for
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "get user subscriptions success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/SubscribeList"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{username}/subscribe:
+    get:
+      tags:
+        - subscribe
+      summary: Get user subscriptions.
+      operationId: getUserSubscriptions
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user to get subscriptions for
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The number of items to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 10
+        - name: offset
+          in: query
+          description: The number of items to skip before starting to collect the result set
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "get user subscriptions success"
+                  status:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/SubscribeList"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
+    SubscribeList:
+      type: object
+      properties:
+        totalItems:
+          type: integer
+          format: int32
+          example: 100
+        Items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Subscribe"
+    Subscribe:
+      type: object
+      properties:
+        ID:
+          type: integer
+          format: int64
+          example: 1
+        instanceID:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-04-17T14:49:51.124+08:00"
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        item_id:
+          type: integer
+          format: int64
+          example: 1912760398554075136
+        item_type:
+          type: string
+          example: "user"
     LikeList:
       type: object
       properties:
@@ -1287,6 +1558,10 @@ components:
         author:
           type: string
           example: "useraccount"
+          required:
+            - author
+            - content
+            - title
     UserList:
       type: object
       properties:
@@ -1391,5 +1666,5 @@ components:
             "read:pets": read your pets
     api_key:
       type: apiKey
-      name: api_key
+      name: Basic
       in: header

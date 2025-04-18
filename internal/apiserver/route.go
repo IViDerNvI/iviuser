@@ -46,6 +46,9 @@ func RegisterRoutes(e *gin.Engine) {
 			// user like items
 			user.GET("/:id/:type/like", likeController.List)
 
+			// user subscribe items
+			user.GET("/:id/:type/subscribe", subscribeController.List)
+
 			// user avator
 			user.GET("/:id/avatar", userController.GetAvatar)
 			user.PUT("/:id/avatar", authorize, mustLogin, userController.PutAvatar)
@@ -73,6 +76,13 @@ func RegisterRoutes(e *gin.Engine) {
 			like.DELETE("/:type/:resourceid", authorize, mustLogin, likeController.Delete)
 		}
 
+		subscribe := v1.Group("/subscribe")
+		{
+			subscribe.POST("/:type/:resourceid", authorize, mustLogin, subscribeController.Create)
+			subscribe.GET("/:type/:resourceid", authorize, subscribeController.Get)
+			subscribe.DELETE("/:type/:resourceid", authorize, mustLogin, subscribeController.Delete)
+		}
+
 		problem := v1.Group("/problem")
 		{
 			problem.GET("/:id", problemController.Get)
@@ -87,14 +97,6 @@ func RegisterRoutes(e *gin.Engine) {
 			submit.POST("/", submitController.Create)
 			submit.PUT("/:id", submitController.Update)
 			submit.DELETE("/:id", submitController.Delete)
-		}
-
-		subscribe := v1.Group("/subscribe")
-		{
-			subscribe.GET("/:id", subscribeController.Get)
-			subscribe.POST("/", subscribeController.Create)
-			subscribe.PUT("/:id", subscribeController.Update)
-			subscribe.DELETE("/:id", subscribeController.Delete)
 		}
 
 		solution := v1.Group("/solution")

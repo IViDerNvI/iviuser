@@ -52,7 +52,11 @@ func (u *User) String() string {
 
 func (u *User) BeforeCreate(tx *gorm.DB) error {
 	u.InstanceID = uint(idutil.SnowflakeID())
-	u.Password, _ = bcryptutil.HashPassword(u.Password)
+	var err error
+	u.Password, err = bcryptutil.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

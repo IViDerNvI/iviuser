@@ -9,7 +9,12 @@ import (
 )
 
 func (c *PostController) Update(ctx *gin.Context) {
-	id, _ := strconv.Atoi(ctx.Param("id"))
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
+
 	old, err := c.Service.Posts().Get(ctx, uint(id), nil)
 	if err != nil {
 		core.WriteResponse(ctx, err, nil)
@@ -22,8 +27,17 @@ func (c *PostController) Update(ctx *gin.Context) {
 		return
 	}
 
-	opUserName := ctx.MustGet("X-Operation-User-Name").(string)
-	opUserStatus := ctx.MustGet("X-Operation-User-Status").(string)
+	opUserName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || opUserName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	opUserStatus, ok := ctx.Get("X-Operation-User-Status")
+	if !ok || opUserStatus == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
 
 	if opUserStatus != "admin" && opUserName != old.Author {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)

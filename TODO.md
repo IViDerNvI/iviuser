@@ -30,12 +30,12 @@
     - [v] get operation
     - [v] delete operation
     - [v] list operation
-- [ ] subscribe controller
-    - [ ] create operation
-    - [ ] update operation
-    - [ ] get operation
-    - [ ] delete operation
-    - [ ] list operation
+- [v] subscribe controller
+    - [v] create operation
+    - [v] update operation
+    - [v] get operation
+    - [v] delete operation
+    - [v] list operation
 
 ### rpc resource
 - [ ] problem controller

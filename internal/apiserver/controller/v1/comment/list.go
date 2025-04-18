@@ -9,8 +9,17 @@ import (
 )
 
 func (c *CommentController) List(ctx *gin.Context) {
-	limit, _ := strconv.Atoi(ctx.Query("limit"))
-	offset, _ := strconv.Atoi(ctx.Query("offset"))
+	limit, err := strconv.Atoi(ctx.Query("limit"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
+
+	offset, err := strconv.Atoi(ctx.Query("offset"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 
 	mapper := map[string]string{
 		"title":   ctx.Query("title"),
@@ -25,6 +34,7 @@ func (c *CommentController) List(ctx *gin.Context) {
 		Offset:   offset,
 		Selector: selector,
 	}
+	listOptions.Complete()
 
 	posts, err := c.Service.Posts().List(ctx, listOptions)
 	if err != nil {
