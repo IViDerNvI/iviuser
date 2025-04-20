@@ -4,11 +4,17 @@ package solution;
 
 option go_package = "github.com/ividernvi/iviuser/internal/apiserver/proto/solution";
 
-message SolutionInfo {
+message GetSolutionRequest {
+    string problem_id = 1;
 }
 
-message GetUserRequest {
-    string username = 1;
+message SolutionInfo {
+    string test_data = 1;
+    string test_result = 2;
+}
+
+message GetSolutionResponse {
+     repeated SolutionInfo solutions = 1;
 }
 
 message ErrorResponse {
@@ -16,9 +22,6 @@ message ErrorResponse {
     string message = 2;
 }
 
-service UserInfoService {
-    rpc Create (UserInfo) returns (ErrorResponse);
-    rpc Get (GetUserRequest) returns (UserInfo);
-    rpc Update (UserInfo) returns (ErrorResponse);
-    rpc Delete (GetUserRequest) returns (ErrorResponse);
+service SolutionRPCService {
+    rpc GetSolution (GetSolutionRequest) returns (GetSolutionResponse);
 }

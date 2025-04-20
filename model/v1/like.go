@@ -10,7 +10,7 @@ type Like struct {
 	ObjMeta  `json:",inline"`
 	UserName string `json:"username" gorm:"primaryKey;column:username"`
 	ItemType string `json:"item_type" gorm:"primaryKey;column:item_type" validate:"required"`
-	ItemID   string `json:"item_id" gorm:"primaryKey;column:item_id" validate:"required"`
+	ItemID   uint   `json:"item_id" gorm:"primaryKey;column:item_id" validate:"required"`
 }
 
 type LikeList struct {

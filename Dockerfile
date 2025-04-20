@@ -1,5 +1,5 @@
 # 第一阶段：构建应用
-FROM golang:latest as builder
+FROM golang:latest AS builder
 
 WORKDIR /app
 
@@ -31,6 +31,7 @@ RUN ls -l /root
 
 ENV IVIUSER_MYSQL_HOSTNAME="localhost"
 ENV IVIUSER_MINIO_ENDPOINT="localhost:9000"
+ENV IVIUSER_JUDGE_RPC_ENDPOINT="localhost:50052"
 
 EXPOSE 8080
 EXPOSE 8443

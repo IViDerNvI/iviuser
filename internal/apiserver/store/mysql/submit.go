@@ -19,9 +19,9 @@ func (s *submitStore) Create(ctx context.Context, submit *v1.Submit, opts *v1.Cr
 	return s.db.Create(submit).Error
 }
 
-func (s *submitStore) Get(ctx context.Context, title string, opts *v1.GetOptions) (*v1.Submit, error) {
+func (s *submitStore) Get(ctx context.Context, id uint, opts *v1.GetOptions) (*v1.Submit, error) {
 	submit := new(v1.Submit)
-	err := s.db.Where("title = ?", title).First(submit).Error
+	err := s.db.Where("instance_id = ?", id).First(submit).Error
 	return submit, err
 }
 
@@ -52,6 +52,6 @@ func (s *submitStore) Update(ctx context.Context, submit *v1.Submit, opts *v1.Up
 	return s.db.Save(submit).Error
 }
 
-func (s *submitStore) Delete(ctx context.Context, title string, opts *v1.DeleteOptions) error {
-	return s.db.Where("title = ?", title).Delete(&v1.Submit{}).Error
+func (s *submitStore) Delete(ctx context.Context, id uint, opts *v1.DeleteOptions) error {
+	return s.db.Where("instance_id = ?", id).Delete(&v1.Submit{}).Error
 }

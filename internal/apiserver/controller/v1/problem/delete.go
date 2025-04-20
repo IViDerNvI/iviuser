@@ -8,7 +8,19 @@ import (
 func (c *ProblemController) Delete(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	if err := c.Service.Problems().Delete(ctx, id, nil); err != nil {
+	problem, err := c.Service.Problems().Get(ctx, id, nil)
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
+	operatorName, ok := ctx.Get("X-Operation-User-Name")
+	if !ok || operatorName == nil {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	if err := c.Service.Problems().Delete(ctx, problem.Unique_ID, nil); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}

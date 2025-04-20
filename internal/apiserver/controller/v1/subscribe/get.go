@@ -1,18 +1,24 @@
 package subscribe
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
 )
 
 func (c *SubscribeController) Get(ctx *gin.Context) {
-	rsrcId := ctx.Param("resourceid")
+	rsrcId, err := strconv.Atoi(ctx.Param("resourceid"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 	rsrcType := ctx.Param("type")
 
 	sub := &v1.Subscribe{
 		ItemType: rsrcType,
-		ItemID:   rsrcId,
+		ItemID:   uint(rsrcId),
 	}
 
 	result, err := c.Service.Subscribes().Get(ctx, sub, &v1.GetOptions{})

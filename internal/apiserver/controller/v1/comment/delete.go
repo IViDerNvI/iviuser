@@ -37,7 +37,7 @@ func (c *CommentController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.Service.Posts().Delete(ctx, uint(id), nil); err != nil {
+	if err := c.Service.Comments().Delete(ctx, uint(id), nil); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}

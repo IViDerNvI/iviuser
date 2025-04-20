@@ -23,13 +23,14 @@ func (s *solutionStore) Update(ctx context.Context, solution *v1.Solution, opts 
 	return s.db.Save(solution).Error
 }
 
-func (s *solutionStore) Delete(ctx context.Context, name string, opts *v1.DeleteOptions) error {
-	return s.db.Delete(&v1.Solution{}, name).Error
+func (s *solutionStore) Delete(ctx context.Context, id uint, opts *v1.DeleteOptions) error {
+	return s.db.Where("instance_id = ?", id).Delete(&v1.Solution{}).Error
 }
 
-func (s *solutionStore) Get(ctx context.Context, name string, opts *v1.GetOptions) (*v1.Solution, error) {
+func (s *solutionStore) Get(ctx context.Context, id uint, opts *v1.GetOptions) (*v1.Solution, error) {
 	var solution v1.Solution
-	if err := s.db.First(&solution, name).Error; err != nil {
+	err := s.db.Where("instance_id = ?", id).First(&solution).Error
+	if err != nil {
 		return nil, err
 	}
 	return &solution, nil

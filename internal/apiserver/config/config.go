@@ -53,4 +53,9 @@ func checkDefaultEnv() {
 		logrus.Printf("database hostname is not set, please set IVIUSER_MYSQL_HOSTNAME")
 		os.Exit(1)
 	}
+
+	if IVIUSER_MINIO_ENDPOINT == "" {
+		logrus.Printf("minio endpoint is not set, please set IVIUSER_MINIO_ENDPOINT")
+		os.Exit(1)
+	}
 }

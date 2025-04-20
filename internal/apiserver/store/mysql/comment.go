@@ -49,7 +49,7 @@ func (s *commentStore) List(ctx context.Context, opts *v1.ListOptions) (*v1.Comm
 }
 
 func (s *commentStore) Update(ctx context.Context, comment *v1.Comment, opts *v1.UpdateOptions) error {
-	return s.db.Save(comment).Error
+	return s.db.Updates(comment).Error
 }
 
 func (s *commentStore) Delete(ctx context.Context, id uint, opts *v1.DeleteOptions) error {

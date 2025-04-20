@@ -1,6 +1,8 @@
 package like
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ividernvi/iviuser/pkg/core"
 
@@ -8,12 +10,16 @@ import (
 )
 
 func (c *LikeController) Get(ctx *gin.Context) {
-	rsrcId := ctx.Param("resourceid")
+	rsrcId, err := strconv.Atoi(ctx.Param("resourceid"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 	rsrcType := ctx.Param("type")
 
 	like := &v1.Like{
 		ItemType: rsrcType,
-		ItemID:   rsrcId,
+		ItemID:   uint(rsrcId),
 	}
 
 	result, err := c.Service.Likes().Get(ctx, like, &v1.GetOptions{})

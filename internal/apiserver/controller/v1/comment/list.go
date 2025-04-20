@@ -22,9 +22,8 @@ func (c *CommentController) List(ctx *gin.Context) {
 	}
 
 	mapper := map[string]string{
-		"title":   ctx.Query("title"),
-		"content": ctx.Query("content"),
-		"author":  ctx.Query("author"),
+		"source_type": "post",
+		"source":      ctx.Param("id"),
 	}
 
 	selector := v1.Selector(mapper)
@@ -36,7 +35,7 @@ func (c *CommentController) List(ctx *gin.Context) {
 	}
 	listOptions.Complete()
 
-	posts, err := c.Service.Posts().List(ctx, listOptions)
+	posts, err := c.Service.Comments().List(ctx, listOptions)
 	if err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return

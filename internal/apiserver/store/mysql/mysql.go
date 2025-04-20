@@ -32,6 +32,7 @@ func GetMySQLInstanceOr(opts db.DBOptions) (store.Store, error) {
 			panic(err)
 		}
 		DropAndMigrate(database)
+
 		MySQLIns = &datastore{db: database}
 	})
 	return MySQLIns, err
@@ -97,6 +98,27 @@ func AutoMigrate(db *gorm.DB) {
 	if err != nil {
 		panic(err)
 	}
+
+	err = db.AutoMigrate(&v1.Subscribe{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.AutoMigrate(&v1.Problem{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.AutoMigrate(&v1.Solution{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.AutoMigrate(&v1.Submit{})
+	if err != nil {
+		panic(err)
+	}
+
 }
 
 func AutoDrop(db *gorm.DB) {
@@ -119,9 +141,31 @@ func AutoDrop(db *gorm.DB) {
 	if err != nil {
 		panic(err)
 	}
+
+	err = db.Migrator().DropTable(&v1.Subscribe{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Problem{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Solution{})
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Migrator().DropTable(&v1.Submit{})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func DropAndMigrate(db *gorm.DB) {
 	AutoDrop(db)
 	AutoMigrate(db)
+
+	DataInit(db)
 }

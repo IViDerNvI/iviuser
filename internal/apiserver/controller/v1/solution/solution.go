@@ -6,11 +6,11 @@ import (
 )
 
 type SolutionController struct {
-	service service.Service
+	Service service.Service
 }
 
 func NewSolutionController(store store.Store) *SolutionController {
 	return &SolutionController{
-		service: service.NewService(store),
+		Service: service.NewService(store),
 	}
 }

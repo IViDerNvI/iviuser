@@ -1,6 +1,8 @@
 package comment
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
@@ -13,7 +15,13 @@ func (c *CommentController) Update(ctx *gin.Context) {
 		return
 	}
 
-	com, err := c.Service.Comments().Get(ctx, comment.InstanceID, nil)
+	commentID, err := strconv.Atoi(ctx.Param("commentid"))
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
+	com, err := c.Service.Comments().Get(ctx, uint(commentID), nil)
 	if err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
@@ -36,6 +44,12 @@ func (c *CommentController) Update(ctx *gin.Context) {
 
 	if err := c.Service.Comments().Update(ctx, &comment, nil); err != nil {
 		core.WriteResponse(ctx, core.ErrDatabaseUpdate, nil)
+		return
+	}
+
+	err = com.Override(&comment).Validate()
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
 		return
 	}
 

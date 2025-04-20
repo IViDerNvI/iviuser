@@ -4,21 +4,42 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
 )
 
 func (c *CommentController) Get(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+	limit, err := strconv.Atoi(ctx.Query("limit"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
+
+	offset, err := strconv.Atoi(ctx.Query("offset"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
+
+	mapper := map[string]string{
+		"refers_type": "comment",
+		"refers":      ctx.Param("commentid"),
+	}
+
+	selector := v1.Selector(mapper)
+
+	listOptions := &v1.ListOptions{
+		Limit:    limit,
+		Offset:   offset,
+		Selector: selector,
+	}
+	listOptions.Complete()
+
+	posts, err := c.Service.Comments().List(ctx, listOptions)
 	if err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
 
-	comment, err := c.Service.Comments().Get(ctx, uint(id), nil)
-	if err != nil {
-		core.WriteResponse(ctx, err, nil)
-		return
-	}
-
-	core.WriteResponse(ctx, nil, comment)
+	core.WriteResponse(ctx, nil, posts)
 }

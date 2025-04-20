@@ -38,6 +38,7 @@ func (c *UserController) Update(ctx *gin.Context) {
 	}
 
 	old.Override(&user)
+
 	if err := c.Srv.Users().Update(ctx, old, nil); err != nil {
 		core.WriteResponse(ctx, core.ErrDatabaseUpdate, nil)
 		return

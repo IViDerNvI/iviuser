@@ -1,6 +1,8 @@
 package subscribe
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
@@ -8,7 +10,11 @@ import (
 
 func (c *SubscribeController) Delete(ctx *gin.Context) {
 	rsrcType := ctx.Param("type")
-	rsrcId := ctx.Param("resourceid")
+	rsrcId, err := strconv.Atoi(ctx.Param("resourceid"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 
 	opUserNameRaw, ok := ctx.Get("X-Operation-User-Name")
 	if !ok || opUserNameRaw == nil {
@@ -23,7 +29,7 @@ func (c *SubscribeController) Delete(ctx *gin.Context) {
 
 	sub := &v1.Subscribe{
 		ItemType: rsrcType,
-		ItemID:   rsrcId,
+		ItemID:   uint(rsrcId),
 		UserName: opUserName,
 	}
 

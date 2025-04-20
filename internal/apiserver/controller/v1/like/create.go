@@ -1,6 +1,8 @@
 package like
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
@@ -8,7 +10,11 @@ import (
 
 // Create handles the creation of a new like.
 func (c *LikeController) Create(ctx *gin.Context) {
-	rsrcId := ctx.Param("resourceid")
+	rsrcId, err := strconv.Atoi(ctx.Param("resourceid"))
+	if err != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
+		return
+	}
 	rsrcType := ctx.Param("type")
 
 	token := ctx.GetHeader("Authorization")
@@ -25,7 +31,7 @@ func (c *LikeController) Create(ctx *gin.Context) {
 
 	like := v1.Like{
 		ItemType: rsrcType,
-		ItemID:   rsrcId,
+		ItemID:   uint(rsrcId),
 		UserName: opUser.UserName,
 	}
 

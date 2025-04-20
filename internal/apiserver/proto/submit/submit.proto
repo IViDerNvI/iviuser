@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package submit;
+
+option go_package = "github.com/ividernvi/iviuser/internal/apiserver/proto/submit";
+
+message UpdateSubmitRequest {
+    string submit_instance_id = 1;
+    string status = 2;
+    string details = 3;
+}
+
+message UpdateSubmitResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+service SubmitRPCService {
+    rpc UpdateSubmit (UpdateSubmitRequest) returns (UpdateSubmitResponse);
+}

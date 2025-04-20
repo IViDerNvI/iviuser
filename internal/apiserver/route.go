@@ -30,6 +30,7 @@ func RegisterRoutes(e *gin.Engine) {
 		// middlewares
 		authorize := usermiddleware.Authorize(userController)
 		mustLogin := usermiddleware.MustLogin()
+		mustAdmin := usermiddleware.MustAdmin()
 
 		v1.POST("/login", authorize, mustLogin, userController.Login)
 		v1.POST("/logout", userController.Logout)
@@ -63,8 +64,9 @@ func RegisterRoutes(e *gin.Engine) {
 			post.GET("/", authorize, postController.List)
 
 			// post comment
-			post.GET("/:id/comment", authorize, commentController.List)
-			post.POST("/:id/comment/:commentid", authorize, mustLogin, commentController.Create)
+			post.GET("/:id/comment/:commentid", authorize, commentController.Get)
+			post.GET("/:id/comment/", authorize, commentController.List)
+			post.POST("/:id/comment/", authorize, mustLogin, commentController.Create)
 			post.PUT("/:id/comment/:commentid", authorize, mustLogin, commentController.Update)
 			post.DELETE("/:id/comment/:commentid", authorize, mustLogin, commentController.Delete)
 		}
@@ -85,27 +87,29 @@ func RegisterRoutes(e *gin.Engine) {
 
 		problem := v1.Group("/problem")
 		{
-			problem.GET("/:id", problemController.Get)
-			problem.POST("/", problemController.Create)
-			problem.PUT("/:id", problemController.Update)
-			problem.DELETE("/:id", problemController.Delete)
+			problem.GET("/:id", authorize, problemController.Get)
+			problem.POST("/", authorize, mustAdmin, problemController.Create)
+			problem.PUT("/:id", authorize, mustAdmin, problemController.Update)
+			problem.DELETE("/:id", authorize, mustAdmin, problemController.Delete)
+			problem.GET("/", authorize, problemController.List)
 		}
 
 		submit := v1.Group("/submit")
 		{
-			submit.GET("/:id", submitController.Get)
-			submit.POST("/", submitController.Create)
-			submit.PUT("/:id", submitController.Update)
-			submit.DELETE("/:id", submitController.Delete)
+			submit.GET("/:id", authorize, submitController.Get)
+			submit.POST("/", authorize, mustLogin, submitController.Create)
+			submit.PUT("/:id", authorize, mustAdmin, submitController.Update)
+			submit.DELETE("/:id", authorize, mustAdmin, submitController.Delete)
+			submit.GET("/", authorize, submitController.List)
 		}
 
 		solution := v1.Group("/solution")
 		{
-			solution.GET("/:id", solutionController.Get)
-			solution.POST("/", solutionController.Create)
-			solution.PUT("/:id", solutionController.Update)
-			solution.DELETE("/:id", solutionController.Delete)
-			solution.GET("/", solutionController.List)
+			solution.GET("/:id", authorize, solutionController.Get)
+			solution.POST("/", authorize, solutionController.Create)
+			solution.PUT("/:id", authorize, solutionController.Update)
+			solution.DELETE("/:id", authorize, solutionController.Delete)
+			solution.GET("/", authorize, solutionController.List)
 		}
 
 	}

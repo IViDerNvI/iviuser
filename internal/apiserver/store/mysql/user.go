@@ -54,7 +54,7 @@ func (s *userStore) List(ctx context.Context, opts *v1.ListOptions) (*v1.UserLis
 }
 
 func (s *userStore) Update(ctx context.Context, user *v1.User, opts *v1.UpdateOptions) error {
-	return s.db.Model(&v1.User{}).Where("instance_id = ?", user.ObjMeta.InstanceID).Updates(user).Error
+	return s.db.Model(&v1.User{}).Where("instance_id = ?", user.InstanceID).Updates(user).Error
 }
 
 func (s *userStore) Delete(ctx context.Context, username string, opts *v1.DeleteOptions) error {

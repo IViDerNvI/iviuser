@@ -14,10 +14,30 @@ func (c *SubmitController) Create(ctx *gin.Context) {
 		return
 	}
 
+	operatorName, exists := ctx.Get("X-Operation-User-Name")
+	if !exists {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	var valid bool
+	submit.Author, valid = operatorName.(string)
+	if !valid {
+		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
+		return
+	}
+
+	submit.Status = v1.SubmitStatusPending
+
+	if err := submit.Validate(); err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
 	if err := c.Service.Submits().Create(ctx, &submit, nil); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
 
-	ctx.JSON(200, submit)
+	core.WriteResponse(ctx, nil, submit)
 }

@@ -32,5 +32,5 @@ func (c *PostController) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, post)
+	core.WriteResponse(ctx, nil, post)
 }

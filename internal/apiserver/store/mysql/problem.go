@@ -21,7 +21,7 @@ func (s *problemStore) Create(ctx context.Context, problem *v1.Problem, opts *v1
 
 func (s *problemStore) Get(ctx context.Context, name string, opts *v1.GetOptions) (*v1.Problem, error) {
 	problem := new(v1.Problem)
-	err := s.db.Where("name = ?", name).First(problem).Error
+	err := s.db.Where("unique_id = ?", name).First(problem).Error
 	return problem, err
 }
 
@@ -49,9 +49,9 @@ func (s *problemStore) List(ctx context.Context, opts *v1.ListOptions) (*v1.Prob
 }
 
 func (s *problemStore) Update(ctx context.Context, problem *v1.Problem, opts *v1.UpdateOptions) error {
-	return s.db.Save(problem).Error
+	return s.db.Updates(problem).Error
 }
 
 func (s *problemStore) Delete(ctx context.Context, name string, opts *v1.DeleteOptions) error {
-	return s.db.Where("name = ?", name).Delete(&v1.Problem{}).Error
+	return s.db.Where("unique_id = ?", name).Delete(&v1.Problem{}).Error
 }

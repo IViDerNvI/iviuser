@@ -83,6 +83,14 @@ func (u *User) AfterGet(tx *gorm.DB) error {
 }
 
 func (u *User) Override(newuser *User) *User {
+	if newuser.Password != "" {
+		var err error
+		u.Password, err = bcryptutil.HashPassword(u.Password)
+		if err != nil {
+			return nil
+		}
+	}
+
 	if newuser.NickName != "" {
 		u.NickName = newuser.NickName
 	}

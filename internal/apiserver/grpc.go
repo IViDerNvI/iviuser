@@ -6,22 +6,26 @@ import (
 
 	"github.com/ividernvi/iviuser/internal/apiserver/config"
 	"github.com/ividernvi/iviuser/internal/apiserver/proto"
-	pb "github.com/ividernvi/iviuser/internal/apiserver/proto/user"
+	pbSolution "github.com/ividernvi/iviuser/internal/apiserver/proto/solution"
+	pbSubmit "github.com/ividernvi/iviuser/internal/apiserver/proto/submit"
 	"github.com/ividernvi/iviuser/internal/apiserver/store"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 type GRPCServer struct {
-	proto.UserRPCServer
+	proto.SolutionRPCServer
+	proto.SubmitRPCServer
 }
 
 func NewGRPCServer(store store.Store) *grpc.Server {
 	server := grpc.NewServer()
-	pb.RegisterUserInfoServiceServer(server, &GRPCServer{
-		*proto.NewUserRPCServer(store),
-	})
-	reflection.Register(server)
+
+	solutionRPCServer := proto.NewSolutionRPCServer(store)
+	submitRPCServer := proto.NewSubmitRPCServer(store)
+
+	pbSolution.RegisterSolutionRPCServiceServer(server, solutionRPCServer)
+	pbSubmit.RegisterSubmitRPCServiceServer(server, submitRPCServer)
+
 	return server
 }
 
