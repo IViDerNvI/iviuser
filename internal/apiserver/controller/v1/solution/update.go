@@ -27,7 +27,11 @@ func (c *SolutionController) Update(ctx *gin.Context) {
 		return
 	}
 
-	err = old.Override(&solution).Validate()
+	if old.Override(&solution).Validate() != nil {
+		core.WriteResponse(ctx, core.ErrJSONFormation, nil)
+		return
+	}
+
 	if err := old.Validate(); err != nil {
 		core.WriteResponse(ctx, err, nil)
 		return
