@@ -2,8 +2,11 @@ package submit
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/ividernvi/iviuser/internal/apiserver/config"
+	pb "github.com/ividernvi/iviuser/internal/apiserver/proto/submit"
 	v1 "github.com/ividernvi/iviuser/model/v1"
 	"github.com/ividernvi/iviuser/pkg/core"
+	"google.golang.org/grpc"
 )
 
 func (c *SubmitController) Create(ctx *gin.Context) {
@@ -33,6 +36,58 @@ func (c *SubmitController) Create(ctx *gin.Context) {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
+
+	conn, err := grpc.NewClient(config.IVIUSER_JUDGE_RPC_ENDPOINT)
+	if err != nil {
+		panic(err)
+	}
+
+	problem, err := c.Service.Problems().Get(ctx, submit.ProblemID, nil)
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
+	mapper := map[string]string{
+		"problem_id": ctx.Query("problem_id"),
+	}
+	selector := v1.Selector(mapper)
+
+	testcases, err := c.Service.Solutions().List(ctx, &v1.ListOptions{
+		Offset:   0,
+		Limit:    10000,
+		Selector: selector,
+	})
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
+	var cases []*pb.Case
+	for _, testcase := range testcases.Items {
+		cases = append(cases, &pb.Case{
+			Input:          testcase.TestData,
+			ExpectedOutput: testcase.TestResult,
+		})
+	}
+
+	client := pb.NewJudgeServiceClient(conn)
+	req := &pb.Request{
+		Code:        submit.CodeText,
+		Language:    submit.Language,
+		Cases:       cases,
+		TimeLimit:   int64(problem.MemoryLimit),
+		MemoryLimit: problem.MemoryLimit,
+	}
+
+	resp, err := client.Judge(ctx, req)
+	if err != nil {
+		core.WriteResponse(ctx, err, nil)
+		return
+	}
+
+	submit.Status = resp.Status
+	submit.Details = resp.Message
 
 	if err := c.Service.Submits().Create(ctx, &submit, nil); err != nil {
 		core.WriteResponse(ctx, err, nil)

@@ -12,7 +12,7 @@ type Comment struct {
 	ObjMeta `json:",inline"`
 
 	Content    string `json:"content" gorm:"column:content" validate:"required"`
-	Auhtor     string `json:"auhtor" gorm:"column:auhtor" validate:"required"`
+	Auhtor     string `json:"author" gorm:"column:author" validate:"required"`
 	RefersItem uint   `json:"refer_id" gorm:"column:refers" validate:"required"`
 	RefersType string `json:"refer_type" gorm:"column:refers_type" validate:"required,oneof=post problem comment"`
 	SourceItem uint   `json:"source_id" gorm:"column:source" validate:"required"`

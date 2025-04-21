@@ -26,6 +26,7 @@ func (c *CommentController) Update(ctx *gin.Context) {
 		core.WriteResponse(ctx, err, nil)
 		return
 	}
+
 	opUserName, ok := ctx.Get("X-Operation-User-Name")
 	if !ok || opUserName == nil {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
@@ -42,14 +43,13 @@ func (c *CommentController) Update(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.Service.Comments().Update(ctx, &comment, nil); err != nil {
-		core.WriteResponse(ctx, core.ErrDatabaseUpdate, nil)
+	if com.Override(&comment).Validate() != nil {
+		core.WriteResponse(ctx, core.ErrInvalidParams, nil)
 		return
 	}
 
-	err = com.Override(&comment).Validate()
-	if err != nil {
-		core.WriteResponse(ctx, err, nil)
+	if err := c.Service.Comments().Update(ctx, com, nil); err != nil {
+		core.WriteResponse(ctx, core.ErrDatabaseUpdate, nil)
 		return
 	}
 

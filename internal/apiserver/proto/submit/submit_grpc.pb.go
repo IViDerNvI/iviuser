@@ -19,101 +19,101 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SubmitRPCService_UpdateSubmit_FullMethodName = "/submit.SubmitRPCService/UpdateSubmit"
+	JudgeService_Judge_FullMethodName = "/submit.JudgeService/Judge"
 )
 
-// SubmitRPCServiceClient is the client API for SubmitRPCService service.
+// JudgeServiceClient is the client API for JudgeService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SubmitRPCServiceClient interface {
-	UpdateSubmit(ctx context.Context, in *UpdateSubmitRequest, opts ...grpc.CallOption) (*UpdateSubmitResponse, error)
+type JudgeServiceClient interface {
+	Judge(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
-type submitRPCServiceClient struct {
+type judgeServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSubmitRPCServiceClient(cc grpc.ClientConnInterface) SubmitRPCServiceClient {
-	return &submitRPCServiceClient{cc}
+func NewJudgeServiceClient(cc grpc.ClientConnInterface) JudgeServiceClient {
+	return &judgeServiceClient{cc}
 }
 
-func (c *submitRPCServiceClient) UpdateSubmit(ctx context.Context, in *UpdateSubmitRequest, opts ...grpc.CallOption) (*UpdateSubmitResponse, error) {
+func (c *judgeServiceClient) Judge(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateSubmitResponse)
-	err := c.cc.Invoke(ctx, SubmitRPCService_UpdateSubmit_FullMethodName, in, out, cOpts...)
+	out := new(Response)
+	err := c.cc.Invoke(ctx, JudgeService_Judge_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// SubmitRPCServiceServer is the server API for SubmitRPCService service.
-// All implementations must embed UnimplementedSubmitRPCServiceServer
+// JudgeServiceServer is the server API for JudgeService service.
+// All implementations must embed UnimplementedJudgeServiceServer
 // for forward compatibility.
-type SubmitRPCServiceServer interface {
-	UpdateSubmit(context.Context, *UpdateSubmitRequest) (*UpdateSubmitResponse, error)
-	mustEmbedUnimplementedSubmitRPCServiceServer()
+type JudgeServiceServer interface {
+	Judge(context.Context, *Request) (*Response, error)
+	mustEmbedUnimplementedJudgeServiceServer()
 }
 
-// UnimplementedSubmitRPCServiceServer must be embedded to have
+// UnimplementedJudgeServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedSubmitRPCServiceServer struct{}
+type UnimplementedJudgeServiceServer struct{}
 
-func (UnimplementedSubmitRPCServiceServer) UpdateSubmit(context.Context, *UpdateSubmitRequest) (*UpdateSubmitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSubmit not implemented")
+func (UnimplementedJudgeServiceServer) Judge(context.Context, *Request) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Judge not implemented")
 }
-func (UnimplementedSubmitRPCServiceServer) mustEmbedUnimplementedSubmitRPCServiceServer() {}
-func (UnimplementedSubmitRPCServiceServer) testEmbeddedByValue()                          {}
+func (UnimplementedJudgeServiceServer) mustEmbedUnimplementedJudgeServiceServer() {}
+func (UnimplementedJudgeServiceServer) testEmbeddedByValue()                      {}
 
-// UnsafeSubmitRPCServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SubmitRPCServiceServer will
+// UnsafeJudgeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to JudgeServiceServer will
 // result in compilation errors.
-type UnsafeSubmitRPCServiceServer interface {
-	mustEmbedUnimplementedSubmitRPCServiceServer()
+type UnsafeJudgeServiceServer interface {
+	mustEmbedUnimplementedJudgeServiceServer()
 }
 
-func RegisterSubmitRPCServiceServer(s grpc.ServiceRegistrar, srv SubmitRPCServiceServer) {
-	// If the following call pancis, it indicates UnimplementedSubmitRPCServiceServer was
+func RegisterJudgeServiceServer(s grpc.ServiceRegistrar, srv JudgeServiceServer) {
+	// If the following call pancis, it indicates UnimplementedJudgeServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&SubmitRPCService_ServiceDesc, srv)
+	s.RegisterService(&JudgeService_ServiceDesc, srv)
 }
 
-func _SubmitRPCService_UpdateSubmit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSubmitRequest)
+func _JudgeService_Judge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SubmitRPCServiceServer).UpdateSubmit(ctx, in)
+		return srv.(JudgeServiceServer).Judge(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SubmitRPCService_UpdateSubmit_FullMethodName,
+		FullMethod: JudgeService_Judge_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SubmitRPCServiceServer).UpdateSubmit(ctx, req.(*UpdateSubmitRequest))
+		return srv.(JudgeServiceServer).Judge(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// SubmitRPCService_ServiceDesc is the grpc.ServiceDesc for SubmitRPCService service.
+// JudgeService_ServiceDesc is the grpc.ServiceDesc for JudgeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var SubmitRPCService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "submit.SubmitRPCService",
-	HandlerType: (*SubmitRPCServiceServer)(nil),
+var JudgeService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "submit.JudgeService",
+	HandlerType: (*JudgeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UpdateSubmit",
-			Handler:    _SubmitRPCService_UpdateSubmit_Handler,
+			MethodName: "Judge",
+			Handler:    _JudgeService_Judge_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

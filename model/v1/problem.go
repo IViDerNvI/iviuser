@@ -10,14 +10,14 @@ import (
 
 type Problem struct {
 	ObjMeta     `json:",inline"`
-	Unique_ID   string `json:"unique_id" gorm:"column:unique_id;uniqueIndex;type:varchar(255)" validate:"required"`
-	Title       string `json:"title" gorm:"column:title" validate:"required"`
-	Descrition  string `json:"descrition" gorm:"column:descrition" validate:"required"`
-	Author      string `json:"author" gorm:"column:author" validate:"required"`
-	TimeLimit   int    `json:"time_limit" gorm:"column:time_limit" validate:"required"`
-	MemoryLimit int    `json:"memory_limit" gorm:"column:memory_limit" validate:"required"`
-	Tag         string `json:"tag" gorm:"column:tag" validate:"required"`
-	Level       int    `json:"level" gorm:"column:level" validate:"required"`
+	Unique_ID   string  `json:"unique_id" gorm:"column:unique_id;uniqueIndex;type:varchar(255)" validate:"required"`
+	Title       string  `json:"title" gorm:"column:title" validate:"required"`
+	Descrition  string  `json:"descrition" gorm:"column:descrition" validate:"required"`
+	Author      string  `json:"author" gorm:"column:author" validate:"required"`
+	TimeLimit   int     `json:"time_limit" gorm:"column:time_limit" validate:"required"`
+	MemoryLimit float64 `json:"memory_limit" gorm:"column:memory_limit" validate:"required"`
+	Tag         string  `json:"tag" gorm:"column:tag" validate:"required"`
+	Level       int     `json:"level" gorm:"column:level" validate:"required"`
 }
 
 type ProblemList struct {

@@ -44,7 +44,7 @@ var apiserverCmd = &cobra.Command{
 		}
 		objstore.SetObjStore(minio.NewObjStore(MinioIns))
 
-		go RunGRPCServer(cfg)
+		// go RunGRPCServer(cfg)
 
 		return nil
 	},

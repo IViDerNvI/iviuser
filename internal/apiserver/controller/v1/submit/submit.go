@@ -10,5 +10,7 @@ type SubmitController struct {
 }
 
 func NewSubmitController(store store.Store) *SubmitController {
-	return &SubmitController{Service: service.NewService(store)}
+	return &SubmitController{
+		Service: service.NewService(store),
+	}
 }

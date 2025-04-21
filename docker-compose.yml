@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   minio:
     image: minio/minio:latest
@@ -19,10 +17,11 @@ services:
       MYSQL_PASSWORD: iviuser
 
   app:
-    build: .
+    image: ividernvi/iviuser:latest
     environment:
       - IVIUSER_MYSQL_HOSTNAME=db
       - IVIUSER_MINIO_ENDPOINT=minio:9000
+      - IVIUSER_REDIS_HOSTNAME=redis:6379
     ports:
       - "8080:8080"
       - "8443:8443"

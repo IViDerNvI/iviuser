@@ -76,6 +76,7 @@ func RegisterRoutes(e *gin.Engine) {
 			like.POST("/:type/:resourceid", authorize, mustLogin, likeController.Create)
 			like.GET("/:type/:resourceid", authorize, likeController.Get)
 			like.DELETE("/:type/:resourceid", authorize, mustLogin, likeController.Delete)
+			like.GET("/:type/:resourceid/check", authorize, mustLogin, likeController.Check)
 		}
 
 		subscribe := v1.Group("/subscribe")
@@ -98,6 +99,8 @@ func RegisterRoutes(e *gin.Engine) {
 		{
 			submit.GET("/:id", authorize, submitController.Get)
 			submit.POST("/", authorize, mustLogin, submitController.Create)
+			submit.POST("/judge", authorize, mustLogin, submitController.Judge)
+
 			submit.PUT("/:id", authorize, mustAdmin, submitController.Update)
 			submit.DELETE("/:id", authorize, mustAdmin, submitController.Delete)
 			submit.GET("/", authorize, submitController.List)

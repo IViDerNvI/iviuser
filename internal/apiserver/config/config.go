@@ -26,6 +26,7 @@ var (
 	IVIUSER_MINIO_SECRET_ACCESS_KEY = os.Getenv("IVIUSER_MINIO_SECRET_ACCESS_KEY")
 	IVIUSER_MINIO_USE_SSL           = os.Getenv("IVIUSER_MINIO_USE_SSL")
 	IVIUSER_MINIO_BUCKET_NAME       = os.Getenv("IVIUSER_MINIO_BUCKET_NAME")
+	IVIUSER_JUDGE_RPC_ENDPOINT      = os.Getenv("IVIUSER_JUDGE_RPC_ENDPOINT")
 )
 
 func newConfig() *Config {
@@ -56,6 +57,11 @@ func checkDefaultEnv() {
 
 	if IVIUSER_MINIO_ENDPOINT == "" {
 		logrus.Printf("minio endpoint is not set, please set IVIUSER_MINIO_ENDPOINT")
+		os.Exit(1)
+	}
+
+	if IVIUSER_JUDGE_RPC_ENDPOINT == "" {
+		logrus.Printf("judge rpc endpoint is not set, please set IVIUSER_JUDGE_RPC_ENDPOINT")
 		os.Exit(1)
 	}
 }
