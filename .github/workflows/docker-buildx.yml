@@ -30,7 +30,9 @@ jobs:
       - name: Get git version
         id: git_version
         run: |
+          echo "Current version: $(git rev-parse --short HEAD)"
           echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -41,5 +43,5 @@ jobs:
             ividernvi/iviuser:latest
             ividernvi/iviuser:${{ github.sha }}
             ividernvi/iviuser:${{ env.VERSION }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           build-args: --timeout=600
