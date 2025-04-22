@@ -9,13 +9,13 @@
 要使用 Docker 运行服务，请确保您的系统已安装 Docker。然后，进入项目目录并执行以下命令以构建 Docker 镜像：
 
 ```shell
-docker build -t iviuser-app .
+docker pull ividernvi/iviuser:latest
 ```
 
 镜像构建完成后，可以使用以下命令运行服务：
 
 ```shell
-docker run -d -p 8080:8080 -p 8443:8443 -e IVIUSER_MYSQL_HOST=<mysql_hostname> -e IVIUSER_MINIO_ENDPOINT=<minio_endpoint> --name iviuser iviuser-app
+docker run -d -p 8080:8080 -p 8443:8443 -e IVIUSER_MYSQL_HOST=<mysql_hostname> -e IVIUSER_MINIO_ENDPOINT=<minio_endpoint> --name iviuser iviuser
 ```
 
 此命令将启动服务，并将容器的 8080 端口映射到主机的 8080 端口。您可以通过以下命令验证容器是否正在运行：

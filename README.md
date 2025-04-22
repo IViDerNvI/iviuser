@@ -9,7 +9,7 @@ A Golang-based user information management service.
 To run the service using Docker, ensure you have Docker installed on your system. Then, build the Docker image by navigating to the project directory and executing the following command:
 
 ```shell
-docker build -t iviuser-app .
+docker pull ividernvi/iviuser:latest
 ```
 
 Once the image is built, you can run the service using:

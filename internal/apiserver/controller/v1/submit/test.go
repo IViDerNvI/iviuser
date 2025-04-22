@@ -40,7 +40,12 @@ func (c *SubmitController) Judge(ctx *gin.Context) {
 	var cases []*pb.Case
 	for _, testCase := range requestBody.TestCase {
 		cases = append(cases, &pb.Case{
-			Input: testCase["test_case"].(string),
+			Input: func() string {
+				if input, ok := testCase["test_case"].(string); ok {
+					return input
+				}
+				return ""
+			}(),
 		})
 	}
 
