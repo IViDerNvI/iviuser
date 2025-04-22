@@ -22,9 +22,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract Git Tag
-        id: get_version
-        run: echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+      - name: Get git version
+        id: git_version
+        run: |
+          echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -33,5 +34,6 @@ jobs:
           push: true
           tags: |
             ividernvi/iviuser:latest
+            ividernvi/iviuser:${{ github.sha }}
             ividernvi/iviuser:${{ env.VERSION }}
           platforms: linux/amd64,linux/arm64
