@@ -30,8 +30,8 @@ jobs:
       - name: Get git version
         id: git_version
         run: |
-          echo "Current version: $(git rev-parse --short HEAD)"
-          echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "Current version: $(git describe --tags)"
+          echo "VERSION=$(git describe --tags)" >> $GITHUB_ENV
           
 
       - name: Build and Push Docker Image
