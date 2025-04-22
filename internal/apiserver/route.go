@@ -83,6 +83,7 @@ func RegisterRoutes(e *gin.Engine) {
 		{
 			subscribe.POST("/:type/:resourceid", authorize, mustLogin, subscribeController.Create)
 			subscribe.GET("/:type/:resourceid", authorize, subscribeController.Get)
+			subscribe.GET("/:type/:resourceid/check", authorize, mustLogin, subscribeController.Check)
 			subscribe.DELETE("/:type/:resourceid", authorize, mustLogin, subscribeController.Delete)
 		}
 

@@ -11,7 +11,7 @@ import (
 type Subscribe struct {
 	ObjMeta  `json:",inline"`
 	UserName string `json:"username" gorm:"column:username;uniqueIndex:idx_username_itemtype_itemid;type:varchar(255)" validate:"required"`
-	ItemType string `json:"item_type" gorm:"column:item_type;uniqueIndex:idx_username_itemtype_itemid;type:varchar(255)" validate:"required"`
+	ItemType string `json:"item_type" gorm:"column:item_type;uniqueIndex:idx_username_itemtype_itemid;type:varchar(255)" validate:"required;oneof=user"`
 	ItemID   uint   `json:"item_id" gorm:"column:item_id;uniqueIndex:idx_username_itemtype_itemid" validate:"required"`
 }
 

@@ -1,4 +1,4 @@
-package like
+package subscribe
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,7 +6,7 @@ import (
 	"github.com/ividernvi/iviuser/pkg/core"
 )
 
-func (c *LikeController) Check(ctx *gin.Context) {
+func (c *SubscribeController) Check(ctx *gin.Context) {
 	opUserNameRaw, ok := ctx.Get("X-Operation-User-Name")
 	if !ok {
 		core.WriteResponse(ctx, core.ErrNoAuthorization, nil)
@@ -27,7 +27,7 @@ func (c *LikeController) Check(ctx *gin.Context) {
 
 	selector := v1.Selector(mapper)
 
-	result, err := c.Service.Likes().List(ctx, &v1.ListOptions{
+	result, err := c.Service.Subscribes().List(ctx, &v1.ListOptions{
 		Offset:   0,
 		Limit:    1,
 		Selector: selector,
